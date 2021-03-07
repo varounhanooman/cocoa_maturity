@@ -50,7 +50,6 @@ pyparsing==2.4.7
 pyrsistent==0.15.5
 pyserial==3.4
 python-dateutil==2.8.1
-python-debian===0.1.36ubuntu1
 PyYAML==5.3.1
 requests==2.22.0
 requests-unixsocket==0.2.0
@@ -65,7 +64,6 @@ ssh-import-id==5.10
 systemd-python==234
 threadpoolctl==2.1.0
 Twisted==18.9.0
-ubuntu-advantage-tools==20.3
 ufw==0.36
 unattended-upgrades==0.1
 urllib3==1.25.8
