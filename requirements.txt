@@ -54,7 +54,7 @@ PyYAML==5.3.1
 requests==2.22.0
 requests-unixsocket==0.2.0
 scikit-learn==0.24.1
-scipy==1.6.1
+scipy==1.5.4
 SecretStorage==2.3.1
 service-identity==18.1.0
 simplejson==3.16.0
