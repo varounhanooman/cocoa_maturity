@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Deployment Tutorial 1</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+</head>
+
+<body style="background: #000;">
+ <div class="login">
+	<h1>Cocoa maturity classifier</h1>
+     <a href = "/"> Home </a> <br>
+     
+
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('predict')}}"method="post" enctype="multipart/form-data">
+        
+        <!--
+        <input type="text" name="RM" placeholder="Red Mean" required="required" />
+        <input type="text" name="GM" placeholder="Green mean" required="required" />
+		<input type="text" name="BM" placeholder="blue mean" required="required" />
+        <input type="text" name="RS" placeholder="red dev" required="required" />
+        <input type="text" name="GS" placeholder="green dev" required="required" />
+		<input type="text" name="BS" placeholder="blue dev" required="required" />
+        -->
+
+        <input type="file" name="file" required="required">
+
+        <button type="submit" class="btn btn-primary btn-block btn-large">Process image</button>
+    </form>
+
+   <br>
+   <br>
+   {{ prediction_text }}
+
+ </div>
+
+
+</body>
+</html>
