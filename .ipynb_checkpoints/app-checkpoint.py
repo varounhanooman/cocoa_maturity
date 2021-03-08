@@ -2,14 +2,23 @@ import numpy as np
 from flask import Flask, request, jsonify, render_template
 import pickle
 import cv2
+import glob
+import os, shutil
+import random
+import string
 from matplotlib import pyplot as plt
 from scipy.stats import norm
 
 app = Flask(__name__)
-model = pickle.load(open('finalized_model_logreg.sav', 'rb'))
+model_logreg = pickle.load(open('finalized_model_logreg.sav', 'rb'))
+model_knn = pickle.load(open('finalized_model_knn.sav', 'rb'))
+model_svm = pickle.load(open('finalized_model_svm.sav', 'rb'))
 
 @app.route('/')
 def home():
+    dir = 'static/img'
+    for f in os.listdir(dir):
+        os.remove(os.path.join(dir, f))
     return render_template('index.html')
 
 @app.route('/predict',methods=['POST'])
@@ -21,15 +30,21 @@ def predict():
             uploaded_file.save(uploaded_file.filename)
             return uploaded_file.filename
         return redirect(url_for('home'))
+    
+    def get_random_string(length):
+        # choose from all lowercase letter
+        letters = string.ascii_lowercase
+        result_str = ''.join(random.choice(letters) for i in range(length))
+        return result_str
 
-    def Process_image(image_name):
+    def Process_image(image_name, randomstring):
         image_vec = cv2.imread(image_name, 1)
         g_blurred = cv2.GaussianBlur(image_vec, (5, 5), 0)
 
         blurred_float = g_blurred.astype(np.float32) / 255.0
         edgeDetector = cv2.ximgproc.createStructuredEdgeDetection("model.yml")
         edges = edgeDetector.detectEdges(blurred_float) * 255.0
-        cv2.imwrite('edge-raw.jpg', edges)
+        #cv2.imwrite('edge-raw.jpg', edges)
 
         def SaltPepperNoise(edgeImg):
 
@@ -46,7 +61,7 @@ def predict():
                 median = cv2.medianBlur(edgeImg, 3)
         edges_ = np.asarray(edges, np.uint8)
         SaltPepperNoise(edges_)
-        cv2.imwrite('edge.jpg', edges_)
+        #cv2.imwrite('edge.jpg', edges_)
         #image_display('edge.jpg')
 
         def findSignificantContour(edgeImg):
@@ -76,7 +91,7 @@ def predict():
         # Draw the contour on the original image
         contourImg = np.copy(image_vec)
         cv2.drawContours(contourImg, [contour], 0, (0, 255, 0), 2, cv2.LINE_AA, maxLevel=1)
-        cv2.imwrite('contour.jpg', contourImg)
+        #cv2.imwrite('contour.jpg', contourImg)
         #image_display('contour.jpg')
 
         mask = np.zeros_like(edges_)
@@ -93,12 +108,12 @@ def predict():
         trimap_print = np.copy(trimap)
         trimap_print[trimap_print == cv2.GC_PR_BGD] = 255
         trimap_print[trimap_print == cv2.GC_FGD] = 255
-        cv2.imwrite('trimap.png', trimap_print)
+        cv2.imwrite('static/img/trimap.png', trimap_print)
         #image_display('trimap.png')
 
-        mask_test = cv2.imread('trimap.png')/255.0
+        mask_test = cv2.imread('static/img/trimap.png')/255.0
         final = (image_vec * mask_test).clip(0, 255).astype(np.uint8)
-        cv2.imwrite('final.png', final)
+        cv2.imwrite('static/img/final_'+randomstring+'.png', final)
 
         #extract red channel
         red_channel = np.array(final[:,:,2])
@@ -124,16 +139,24 @@ def predict():
         return result
 
     image_name = upload_file()
-    Process_result = Process_image(image_name)
+    randomstring = get_random_string(8)
+    Process_result = Process_image(image_name, randomstring)
     #int_features = [int(x) for x in request.form.values()]
     #final_features = [np.array(int_features)]
     final_features = [np.array(Process_result)]
-    prediction = model.predict(final_features)
+    
+    prediction_logreg = model_logreg.predict(final_features)
+    prediction_knn = model_knn.predict(final_features)
+    prediction_svm = model_svm.predict(final_features)
 
-    output = round(prediction[0], 2)
+    output_logreg = round(prediction_logreg[0], 2)
+    output_knn = round(prediction_knn[0], 2)
+    output_svm = round(prediction_svm[0], 2)
+    
+    image_string = 'img/final_'+randomstring+'.png'
 
-    return render_template('index.html', prediction_text='Prediction {}'.format(output))
-
+    rendered = render_template('index.html', final_img = image_string , prediction_text_logreg='Prediction logreg {}'.format(output_logreg), prediction_text_knn='Prediction knn {}'.format(output_knn), prediction_text_svm='Prediction svm {}'.format(output_svm))
+    return rendered
 @app.route('/results',methods=['POST'])
 def results():
 
