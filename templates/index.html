@@ -24,6 +24,14 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+    
+    function hidepredictimage() {
+        var pathname = window.location.pathname
+        if (pathname != '/predict'){
+            document.getElementById("process_img").style.visibility = "hidden";  
+        }
+    }
+    window.onload = hidepredictimage;
 </script>
 <style>
 img{
@@ -57,10 +65,19 @@ background:#2d2d2d;}
 	<img id="blah" src="https://www.wihcon.com/wp-content/plugins/Builder_UX-development/admin/assets/img/noImageSelected.jpg" alt="your image" />
         <button type="submit" class="btn btn-primary btn-block btn-large">Process image</button>
     </form>
-
-   <br>
-   <br>
-   {{ prediction_text }}
+    <img id="process_img" src="{{ url_for('static', filename = final_img) }}" alt="your image" />
+     
+    <br>
+    <br>
+   {{ prediction_text_logreg }}
+     
+    <br>
+    <br>
+   {{ prediction_text_knn }}
+     
+    <br>
+    <br>
+   {{ prediction_text_svm }}
 
  </div>
 
