@@ -69,7 +69,6 @@ background:#2d2d2d;}
         <button type="submit" class="btn btn-primary btn-block btn-large">Process image</button>
     </form>
     <img id="process_img" src="{{ url_for('static', filename = final_img) }}" alt="your image" />
-    <p> 
     <br>
     <br>
    {{ prediction_text_logreg }}
@@ -81,7 +80,6 @@ background:#2d2d2d;}
     <br>
     <br>
    {{ prediction_text_svm }}
-     </p>
  </div>
 
 
