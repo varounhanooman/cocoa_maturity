@@ -155,7 +155,7 @@ def predict():
     
     image_string = 'img/final_'+randomstring+'.png'
 
-    rendered = render_template('index.html', final_img = image_string , prediction_text_logreg='Prediction logreg {}'.format(output_logreg), prediction_text_knn='Prediction knn {}'.format(output_knn), prediction_text_svm='Prediction svm {}'.format(output_svm))
+    rendered = render_template('index.html', final_img = image_string , prediction_text_logreg='Prediction logreg: {}'.format(output_logreg), prediction_text_knn='Prediction knn: {}'.format(output_knn), prediction_text_svm='Prediction svm: {}'.format(output_svm))
     return rendered
 @app.route('/results',methods=['POST'])
 def results():
